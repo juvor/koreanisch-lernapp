@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">  <!-- nicht in Suchmaschinen aufnehmen --><title>Tests</title></head>
+<body style="font-family:'Malgun Gothic',sans-serif">
+<h2>Engine-Tests</h2><pre id="out"></pre>
+<script src="../js/hangul.js"></script>
+<script src="../js/conjugate.js"></script>
+<script src="../js/data/lexicon.js"></script>
+<script src="../js/data/grammar.js"></script>
+<script src="../js/keyboard.js"></script>
+<script>
+const C = [
+  ['가다','present','가요'],['오다','present','와요'],['보다','past','봤어요'],['먹다','present','먹어요'],['마시다','past','마셨어요'],
+  ['하다','present','해요'],['공부하다','past','공부했어요'],['배우다','present','배워요'],['되다','present','돼요'],['되다','past','됐어요'],
+  ['쉬다','present','쉬어요'],['보내다','past','보냈어요'],['쓰다','present','써요'],['바쁘다','present','바빠요'],['예쁘다','present','예뻐요'],
+  ['배고프다','present','배고파요'],['슬프다','past','슬펐어요'],['크다','mod','큰'],['듣다','present','들어요'],['듣다','honorific','들으세요'],
+  ['듣다','and','듣고'],['걷다','past','걸었어요'],['돕다','present','도와요'],['돕다','future','도울 거예요'],['춥다','present','추워요'],
+  ['춥다','if','추우면'],['맵다','mod','매운'],['낫다','present','나아요'],['짓다','past','지었어요'],['낫다','if','나으면'],
+  ['모르다','present','몰라요'],['부르다','past','불렀어요'],['빠르다','present','빨라요'],['그렇다','present','그래요'],['그렇다','mod','그런'],
+  ['하얗다','present','하얘요'],['빨갛다','mod','빨간'],['어떻다','present','어때요'],['살다','honorific','사세요'],['살다','formal','삽니다'],
+  ['살다','future','살 거예요'],['살다','mod','사는'],['만들다','nikka','만드니까'],['놀다','reo','놀러 가요'],['열다','promise','열게요'],
+  ['길다','mod','긴'],['멀다','if','멀면'],['먹다','formal','먹습니다'],['가다','formal','갑니다'],['하다','formal','합니다'],
+  ['앉다','honorific','앉으세요'],['많다','present','많아요'],['맛있다','mod','맛있는'],['읽다','modPast','읽은'],['보다','modPast','본'],
+  ['가다','must','가야 해요'],['마시다','must','마셔야 해요'],['공부하다','neg','공부 안 해요'],['가다','neg','안 가요'],['먹다','can','먹을 수 있어요'],
+  ['만나다','shallWe','만날까요?'],['자다','before','자기 전에'],['먹다','after','먹은 후에'],['끝나다','after','끝난 후에'],['입다','present','입어요'],
+  ['좋다','present','좋아요'],['닫다','present','닫아요'],['씻다','present','씻어요'],['기다리다','please','기다려 주세요'],['괜찮다','formal','괜찮습니다'],
+  ['일어나다','past','일어났어요'],['켜다','present','켜요'],['서다','past','섰어요'],['가르치다','present','가르쳐요'],['피곤하다','because','피곤해서'],
+  ['아프다','because','아파서'],
+  ['가다','seemNow','가는 것 같아요'],['바쁘다','seemNow','바쁜 것 같아요'],['맛있다','seemNow','맛있는 것 같아요'],['오다','seemFut','올 것 같아요'],['가다','seemPast','간 것 같아요'],
+  ['춥다','become','추워졌어요'],['따뜻하다','become','따뜻해졌어요'],['빨갛다','become','빨개졌어요'],['살다','cameTo','살게 됐어요'],['바쁘다','geodeun','바쁘거든요'],
+  ['걷다','deora','걷더라고요'],['살다','intend','살려고 해요'],['먹다','intend','먹으려고 해요'],['듣다','intend','들으려고 해요'],['만들다','expYes','만든 적이 있어요'],
+  ['듣다','expNo','들은 적이 없어요'],['살다','when','살 때'],['듣다','when','들을 때'],['춥다','notOnly','추울 뿐만 아니라'],['늦다','almost','늦을 뻔했어요'],
+  ['크다','tend','큰 편이에요'],['그렇다','tend','그런 편이에요'],['자다','pretend','자는 척해요'],['가다','quote','간다고 해요'],['먹다','quote','먹는다고 해요'],
+  ['살다','quote','산다고 해요'],['바쁘다','quote','바쁘다고 해요'],['공부하다','quote','공부한다고 해요'],['맛있다','quote','맛있다고 해요'],['배우다','asPast','배운 대로'],
+  ['춥다','tenikka','추울 테니까'],['하다','tenikka','할 테니까'],['살다','while','사는 동안'],['기다리다','while','기다리는 동안'],['덥다','nikka','더우니까'],['파랗다','present','파래요'],['굽다','present','구워요'],['넓다','present','넓어요']
+];
+const lex = Object.fromEntries(Lexicon.verbs.map(v=>[v.ko,v]));
+let out='', fail=0;
+for (const [v,f,exp] of C) {
+  const e = lex[v] || { ko: v, type: 'V' };
+  const got = Conj.conjugate(e, f);
+  if (got !== exp) { fail++; out += `✗ ${v} ${f}: erwartet ${exp}, bekommen ${got}\n`; }
+}
+// Partikel
+const P = [['학생','topic','학생은'],['저','topic','저는'],['지하철','dir','지하철로'],['손','dir','손으로'],['버스','dir','버스로'],['커피','be','커피예요'],['물','be','물이에요'],['책','notbe','책이 아니에요'],['3','obj','3을']];
+for (const [n,t,exp] of P) { const got = Hangul.particle(n,t); if (got!==exp){fail++; out+=`✗ ${n}+${t}: ${exp} / ${got}\n`;} }
+// Guess
+const G = [['춥다','ㅂ'],['입다',''],['듣다','ㄷ'],['받다',''],['낫다','ㅅ'],['웃다',''],['모르다','르'],['그렇다','ㅎ'],['좋다',''],['따르다','']];
+for (const [v,exp] of G) { const got = Conj.guessClass(v); if (got!==exp){fail++; out+=`✗ guess ${v}: ${exp} / ${got}\n`;} }
+// Fehler-Index-Check der Grammatikdaten
+for (const p of Grammar.points) for (const e of (p.err||[])) {
+  const w = e[0].split(/\s+/), r = e[1].split(/\s+/);
+  if (e[2] >= w.length) { fail++; out += `✗ Fehlerindex ${p.id}: ${e[0]}\n`; }
+}
+// Bildschirmtastatur: Silbenbildung
+const K = [[['ㅎ','ㅏ','ㄴ','ㄱ','ㅜ','ㄱ','ㅇ','ㅓ'],'한국어'],[['ㅎ','ㅏ','ㄴ','ㄱ','ㅜ','ㄱ','ㅓ'],'한구거'],[['ㄷ','ㅏ','ㄹ','ㄱ'],'닭'],[['ㄷ','ㅏ','ㄹ','ㄱ','ㅣ'],'달기'],[['ㅇ','ㅗ','ㅏ'],'와'],
+  [['ㅇ','ㅣ','ㅆ','ㅇ','ㅓ','ㅇ','ㅛ'],'있어요'],[['ㅇ','ㅏ','ㄴ','ㅈ','ㅇ','ㅡ','ㅅ','ㅔ','ㅇ','ㅛ'],'앉으세요'],[['ㄱ','ㅏ','ㅂ','ㅅ'],'값'],[['ㅁ','ㅜ','ㅓ'],'뭐'],[['ㄸ','ㅏ','ㄸ'],'따ㄸ'],[['ㅇ','ㅢ'],'ㅇㅢ'.length?'의':'']];
+for (const [j,exp] of K) { const got = Keyboard.composeAll(j); if (got!==exp){fail++; out+=`✗ Tastatur ${j.join('')}: ${exp} / ${got}
+`;} }
+for (const [a,exp] of [['한','하'],['와','오'],['닭','달'],['가','ㄱ'],['ㄱ','']]) { const got = Keyboard.backJamo(a); if (got!==exp){fail++; out+=`✗ Rücktaste ${a}: ${exp} / ${got}
+`;} }
+out = `${C.length + P.length + G.length + 15} Tests (Lektionen: ${Grammar.points.length}), ${fail} Fehler\n` + out;
+document.getElementById('out').textContent = out;
+</script></body></html>

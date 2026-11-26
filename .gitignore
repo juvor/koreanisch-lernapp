@@ -1,0 +1,12 @@
+# Persönliche Daten nie veröffentlichen
+koreanisch-backup-*.json
+*backup*.json
+vokabeln-*.csv
+meine_vokabeln*.csv
+# lokale Claude-Einstellungen
+.claude/settings.local.json
+# eigene Vokabellisten
+vokabeln/
+
+# lokale Werkzeug-Einstellungen
+.claude/
