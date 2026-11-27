@@ -85,12 +85,13 @@
   add({
     id: 'present', level: 1, title: 'Präsens -아요 / -어요',
     summary: 'Die höfliche Gegenwart – die wichtigste Grundform.',
-    explain: `<p>Verbstamm = Grundform ohne <b>다</b>. Dann entscheidet der <b>letzte Vokal des Stamms</b>:</p>
-<table><tr><th>Stamm</th><th>Endung</th><th>Beispiel</th></tr>
-<tr><td>Vokal ㅏ oder ㅗ</td><td>-아요</td><td>살다 → 살<b>아요</b>, 좋다 → 좋<b>아요</b></td></tr>
-<tr><td>alle anderen</td><td>-어요</td><td>먹다 → 먹<b>어요</b>, 읽다 → 읽<b>어요</b></td></tr>
-<tr><td>하다</td><td>해요</td><td>공부하다 → 공부<b>해요</b></td></tr></table>
-<p><b>Verschmelzungen</b> bei Stamm ohne Batchim: 가+아 → <b>가요</b>, 오+아 → <b>와요</b>, 배우+어 → <b>배워요</b>, 마시+어 → <b>마셔요</b>, 되+어 → <b>돼요</b>, 쓰+어 → <b>써요</b>.</p>
+    explain: `<p>Verbstamm = Grundform ohne <b>다</b>. Dann entscheidet der <b>letzte Vokal im Stamm</b> – egal, ob danach noch ein Konsonant (Batchim) kommt.
+Beispiel 살다 (leben): Stamm 살 = ㅅ + <b>ㅏ</b> + ㄹ → der Vokal ist ㅏ, das ㄹ am Ende spielt keine Rolle.</p>
+<table><tr><th>Letzter Vokal im Stamm</th><th>Endung</th><th>Beispiel</th></tr>
+<tr><td>ㅏ oder ㅗ</td><td>-아요</td><td>살다 (leben) → 살<b>아요</b>, 좋다 (gut sein) → 좋<b>아요</b>, 사다 (kaufen) → <b>사요</b></td></tr>
+<tr><td>alle anderen (ㅓ ㅜ ㅡ ㅣ …)</td><td>-어요</td><td>먹다 (essen) → 먹<b>어요</b>, 읽다 (lesen) → 읽<b>어요</b></td></tr>
+<tr><td>Stamm auf 하</td><td>해요</td><td>공부하다 (lernen) → 공부<b>해요</b></td></tr></table>
+<p><b>Verschmelzungen</b> bei Stamm ohne Batchim: 사+아 → <b>사요</b>, 가+아 → <b>가요</b>, 오+아 → <b>와요</b>, 배우+어 → <b>배워요</b>, 마시+어 → <b>마셔요</b>, 되+어 → <b>돼요</b>, 쓰+어 → <b>써요</b>.</p>
 <p>Unregelmäßige Verben: siehe Lektion „Unregelmäßige Verben“.</p>`,
     drill: { kind: 'conj', forms: ['present'] },
     s: [['저는 매일 커피를 마셔요.', 'Ich trinke jeden Tag Kaffee.'], ['지금 집에 가요.', 'Ich gehe jetzt nach Hause.'],
