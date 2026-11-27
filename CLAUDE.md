@@ -9,3 +9,4 @@
 - `js/dialogs.js` und `js/memory.js` sind in beiden Apps identisch – Änderungen immer in beide Projekte kopieren.
 - Veröffentlicht über GitHub Pages: https://juvor.github.io/koreanisch-lernapp/ (Repo `juvor/koreanisch-lernapp`, Branch `main`). Nach Änderungen fragen, ob veröffentlicht werden soll (commit + push) – nicht ungefragt pushen. Vorher `VERSION` in `sw.js` erhöhen.
 - Commits mit der anonymen Adresse (repo-lokal gesetzt); nie die private E-Mail eintragen.
+- **Lernstand & alte Backups schützen:** Kennungen (Vokabel-/Lektions-/Dialog-/Set-ids, Feldnamen) nie umbenennen oder löschen; neue Funktionen nur mit neuen Feldern. Formatänderung → `SCHEMA` + `MIGRATIONS` in core.js + Testfall (Details: ENTWICKLUNG.md, Abschnitt „Datenformat, Backups & Updates“).

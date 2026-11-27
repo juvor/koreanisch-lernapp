@@ -76,7 +76,7 @@ Script-Reihenfolge: `theme.js` (head) → `hangul` → `conjugate` → `data/*` 
               kbd: { physical /*Laptop tippt Hangul*/, auto /*Bildschirmtastatur automatisch*/ } },
   stats: { days: { 'YYYY-MM-DD': { vocab, vocabOk, grammar, grammarOk } }, newCount: { date, n } },
   importedPackages: { teil1: '<version>', … },   // seit v5
-  lastBackup: 'YYYY-MM-DD'
+  lastBackup: 'YYYY-MM-DD', lastBackupAt, backupNo, appId, version   // siehe 10e
 }
 ```
 Neue Einstellungen immer in `DEFAULT_SETTINGS` (core.js) ergänzen; verschachtelte Objekte in `Store.load()` einzeln mit Defaults mergen.
@@ -198,6 +198,7 @@ In der App: Spalte „Häufigkeit“ (★★★★★ = Stufe 1) in der Vokabell
 - Commits mit der anonymen GitHub-noreply-Adresse (repo-lokal `git config`), nie mit privater E-Mail.
 - Ausgeschlossen per `.gitignore`: `vokabeln/` (private Listen/Pakete), `.claude/`, Backups. `.nojekyll` verhindert Jekyll.
 - **Update-Ablauf:** Änderung → `VERSION` in `sw.js` erhöhen → Tests → `git add -A && git commit` → `git push` → GitHub baut in 1–2 Min. neu (Status: `api.github.com/repos/juvor/REPO/actions/runs`). Nur nach Rückfrage bei der Nutzerin / dem Nutzer veröffentlichen.
+- Datenschutz (seit v12): Doku/Oberfläche ohne persönliche Hinweise, `<meta name="robots" content="noindex, nofollow">` in `index.html` und `tests/test.html`. Der Repository-Verlauf wurde auf **einen** sauberen Commit zurückgesetzt (Force-Push); die alte Geschichte liegt nur lokal im Zweig `archiv-vor-neutralisierung` (nie pushen). Neue Texte vor dem Veröffentlichen auf persönliche Angaben prüfen.
 - Prüfung nach dem Veröffentlichen: Seite laden, `navigator.serviceWorker.ready`, Cache-Name = neue VERSION.
 
 ## 10. Offene Ideen
@@ -233,6 +234,19 @@ Testserver „norsk“ (Port 8766) ist auch in `.claude/launch.json` dieses Proj
 - Zustand `state.memory = { opts: {mode, size, speak}, best: { 'set|modus|paare': {moves, time} } }`. Router `#memory`, `#memory/ID`; `route()` ruft `MemoryView.stop()` (Timer).
 - Nach dem Spiel: Wörter (nur neue, exakt verglichen) als Karten übernehmen, Thema = Set-Thema, Stufe 2.
 
+## 10e. Datenformat, Backups & Updates (seit 2026-11-27)
+- Jeder Datenstand/jedes Backup hat `version` (Formatversion = `SCHEMA` in core.js, aktuell 2), `appId` (`koreanisch-lernapp` / `norwegisch-lernapp`),
+  `backupNo` (fortlaufend, reist im Backup mit), `lastBackupAt` (ISO-Zeit) und im Backup zusätzlich `exportedAt`.
+- `Store.migrate(st)` läuft beim Laden **und** beim Einspielen: bringt ältere Formate schrittweise über `MIGRATIONS[n]` auf den neuesten Stand und ergänzt fehlende Bereiche/Einstellungen mit Standardwerten – Vorhandenes bleibt unverändert. Mehrfaches Migrieren ändert nichts.
+- `Store.checkBackup(st)` lehnt ab: keine Backup-Datei, Backup einer anderen App (`appId`), Backup aus einer **neueren** Formatversion (dann zuerst App aktualisieren).
+- `Store.backup()` erzeugt Dateinamen wie `koreanisch-backup_2026-11-27_14-35_Nr-012.json`.
+- Lernkarten speichern zusätzlich `srs[richtung].ts` (Zeitstempel der letzten Abfrage), Grammatik `grammar[id].ts` – Grundlage für ein späteres Zusammenführen von Backups.
+- **Regeln für Updates (Lernstand muss erhalten bleiben):**
+  1. Kennungen nie umbenennen/löschen: Vokabel-`id`, Lektions-`id`, Dialog-`id`, Memory-Set-`id`, Paket-`id`, Feldnamen im Datenmodell.
+  2. Neue Funktionen legen ihre Daten in **neuen** Feldern ab und kommen ohne sie aus (z. B. `state.memory = state.memory || …`).
+  3. Muss sich das Format ändern: `SCHEMA` erhöhen, Schritt in `MIGRATIONS` ergänzen, Testfall in `tests/test.html` ergänzen.
+  4. `tests/test.html` enthält ein Backup im alten Format 1 – es muss nach jedem Update fehlerfrei und vollständig laden.
+
 ## 11. Änderungsprotokoll
 
 | Datum | Version | Änderung |
@@ -241,6 +255,7 @@ Testserver „norsk“ (Port 8766) ist auch in `.claude/launch.json` dieses Proj
 | 2026-11-25 | v2 | Bildschirmtastatur mit Silbenbildung + Laptop-Tastatur tippt Hangul; Personalisierung (Modus hell/dunkel/sepia/auto, Akzentfarbe, Schriftgröße); iPad: PWA (Manifest, Service Worker, Icons), Touch-Optimierung, schmale Bildschirme; Entwicklungsdoku. |
 | 2026-11-25 | – | GitHub-Pages-Veröffentlichung vorbereitet (lokales Git-Repo, `.gitignore`, `.nojekyll`), auf Wunsch pausiert. |
 | 2026-11-25 | v4 | 18 neue Level-3-Lektionen aus den Lernnotizen (insgesamt 57), 21 neue Konjugationsformen inkl. indirekter Rede, Trainer-Gruppe „Fortgeschritten“, Lexikon +4 Verben; Import kann vorhandene Karten aktualisieren (Lernstand bleibt); Tests auf 148 erweitert. Vokabeln Teil 1: mehrdeutige Korrekturen mit beiden Bedeutungen, Karte 바람 ergänzt (544 Karten). |
+| 2026-11-27 | v13 | Backups: Formatversion, App-Kennung, Migration (`Store.migrate`), Prüfung beim Einspielen (`checkBackup`), Dateiname mit Datum/Uhrzeit/Nummer, Zeitstempel je Abfrage; 16 Backup-Tests mit altem Format; Update-Regeln dokumentiert. |
 | 2026-11-26 | v12 | Datenschutz: persönliche Hinweise in Doku und Oberfläche neutral formuliert, `noindex` gegen Suchmaschinen; Repository-Verlauf auf eine saubere Version zurückgesetzt. |
 | 2026-11-26 | v11 | Veröffentlicht auf GitHub Pages (https://juvor.github.io/koreanisch-lernapp/), anonyme Commit-Adresse, `.claude/` ausgeschlossen; Anleitung iPad/iPhone mit echter Adresse. |
 | 2026-11-26 | v11 | `Check.alts()` ignoriert Klammerinhalte (wie Norwegisch no-v6). |
