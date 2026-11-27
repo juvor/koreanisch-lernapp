@@ -94,6 +94,8 @@ let bk = 0;
   eqB('Prüfung: andere App abgelehnt', S.checkBackup(Object.assign({}, old, { appId: 'andere-lernapp' })).ok, false);
   eqB('Prüfung: neuere Version abgelehnt', S.checkBackup(Object.assign({}, old, { version: S.SCHEMA + 1 })).ok, false);
   eqB('Prüfung: keine Backup-Datei abgelehnt', S.checkBackup({ foo: 1 }).ok, false);
+  { const n = new Date('2026-11-27T21:12:00Z'); const f = JSON.parse(S.fileJson(Object.assign({}, old, { exportedAt: '2026-11-27T08:44:26.053Z' }), n));
+    eqB('Backup-Datei: Exportzeit immer aktuell (nicht aus altem Backup)', f.exportedAt, n.toISOString()); eqB('Backup-Datei: Lernstand drin', f.vocab.length, old.vocab.length); }
 })();
 out = `${C.length + P.length + G.length + 15 + bk} Tests (Lektionen: ${Grammar.points.length}), ${fail} Fehler\n` + out;
 document.getElementById('out').textContent = out;
